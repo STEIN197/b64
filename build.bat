@@ -1,7 +1,9 @@
 @ECHO off
-IF EXIST "common.jar" (
-	DEL common.jar
+IF EXIST "b64.jar" (
+	DEL b64.jar
 )
 ECHO Building a jar archive...
-jar -cf common.jar bin\*
+CD bin
+jar -cfe ..\b64.jar b64.Application .\*
+CD ..
 ECHO Finished
