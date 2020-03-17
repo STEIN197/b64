@@ -1,4 +1,4 @@
-package b64;
+package site.stein197.b64;
 
 import java.io.File;
 import java.io.FileInputStream;
