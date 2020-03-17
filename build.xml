@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<project name="b64">
+	<target name="compile">
+		<echo>Compiling...</echo>
+	</target>
+</project>
