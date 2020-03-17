@@ -1,6 +1,25 @@
 <?xml version="1.0"?>
-<project name="b64">
+<project name="b64" xmlns:ivy="antlib:org.apache.ivy.ant">
+	<property name="srcDir" value="src/main/java"/>
+	<property name="testDir" value="src/main/test"/>
+
+	<target name="clean">
+		<echo>Cleaning up destination directory...</echo>
+		<delete dir="target"/>
+		<mkdir dir="target"/>
+	</target>
+
 	<target name="compile">
 		<echo>Compiling...</echo>
+		<javac
+			srcdir="${srcDir}"
+			destdir="target"
+			/>
 	</target>
+
+	<target name="test"></target>
+
+	<target name="jar" depends="compile"></target>
+	<target name="run" depends="jar"></target>
+	<target name="assemble"></target>
 </project>
