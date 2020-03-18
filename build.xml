@@ -1,25 +1,36 @@
 <?xml version="1.0"?>
-<project name="b64" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="${projectName}" xmlns:ivy="antlib:org.apache.ivy.ant">
+	<property name="projectName" value="b64"/>
 	<property name="srcDir" value="src/main/java"/>
 	<property name="testDir" value="src/main/test"/>
+	<property name="destDir" value="target"/>
+	<property name="version" value="0.1.0"/>
 
-	<target name="clean">
-		<echo>Cleaning up destination directory...</echo>
-		<delete dir="target"/>
-		<mkdir dir="target"/>
+	<target name="clean" description="Clean up destination directory">
+		<mkdir dir="${destDir}"/>
+		<delete includeEmptyDirs="true">
+			<fileset dir="${destDir}" includes="**/*"/>
+		</delete>
 	</target>
 
-	<target name="compile">
-		<echo>Compiling...</echo>
+	<target name="compile" description="Compiling source files into java bytecode">
 		<javac
 			srcdir="${srcDir}"
-			destdir="target"
+			destdir="${destDir}"
 			/>
 	</target>
 
-	<target name="test"></target>
-
-	<target name="jar" depends="compile"></target>
-	<target name="run" depends="jar"></target>
-	<target name="assemble"></target>
+	<target name="jar" depends="compile">
+		<echo>Archiving...</echo>
+		<jar destfile="${projectName}.jar">
+			<manifest>
+				<attribute name="Main-Class" value="site.stein197.b64.Application"/>
+				<attribute name="Version" value="${version}"/>
+				<attribute name="Class-Path" value="."/>
+			</manifest>
+			<fileset dir="${destDir}" includes="**/*"/>
+		</jar>
+	</target>
+	
+	<target name="assemble" depends="jar"></target>
 </project>
