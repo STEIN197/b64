@@ -6,6 +6,10 @@
 	<property name="destDir" value="target"/>
 	<property name="version" value="0.1.0"/>
 
+	<target name="resolve">
+        <ivy:retrieve/>
+    </target>
+
 	<target name="clean" description="Clean up destination directory">
 		<mkdir dir="${destDir}"/>
 		<delete includeEmptyDirs="true">

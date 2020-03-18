@@ -10,7 +10,6 @@ import java.util.Base64;
 // b64 -encode|-decode <file>
 public class Application {
 
-	private String operation;
 	private byte[] data;
 	private String encodedData;
 
