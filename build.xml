@@ -7,17 +7,18 @@
 	<property name="version" value="0.1.0"/>
 
 	<target name="resolve">
-        <ivy:retrieve/>
-    </target>
+		<ivy:retrieve/>
+	</target>
 
 	<target name="clean" description="Clean up destination directory">
 		<mkdir dir="${destDir}"/>
 		<delete includeEmptyDirs="true">
 			<fileset dir="${destDir}" includes="**/*"/>
+			<fileset dir="." includes="*.jar"/>
 		</delete>
 	</target>
 
-	<target name="compile" description="Compiling source files into java bytecode">
+	<target name="compile" description="Compiling source files">
 		<javac
 			srcdir="${srcDir}"
 			destdir="${destDir}"
@@ -25,8 +26,7 @@
 	</target>
 
 	<target name="jar" depends="compile">
-		<echo>Archiving...</echo>
-		<jar destfile="${projectName}.jar">
+		<jar destfile="${projectName}-${version}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="site.stein197.b64.Application"/>
 				<attribute name="Version" value="${version}"/>

@@ -5,6 +5,4 @@ public class Encoder {
 	public Encoder() {
 
 	}
-
-	public String encode() {}
 }

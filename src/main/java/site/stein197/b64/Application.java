@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
-// b64 -encode|-decode <file>
 public class Application {
 
 	private byte[] data;
@@ -33,16 +32,6 @@ public class Application {
 	}
 
 	private void parseArguments(String... args) throws IllegalArgumentException, FileNotFoundException, IOException {
-		if (args.length != 2)
-			throw new IllegalArgumentException("Not enough parameters. Passed " + args.length + " parameters");
-		switch (args[0]) {
-			case "-encode":
-			case "-decode":
-				this.operation = args[0];
-				break;
-			default:
-				throw new IllegalArgumentException("Unknown operation " + args[0]);
-		}
 		File file = new File(args[1]);
 		this.data = new byte[(int) file.length()];
 		InputStream is = new FileInputStream(file);
