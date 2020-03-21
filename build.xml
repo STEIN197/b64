@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
-<project name="${projectName}" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="${projectName}" default="jar" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<property name="projectName" value="b64"/>
 	<property name="srcDir" value="src/main/java"/>
 	<property name="testDir" value="src/main/test"/>
 	<property name="destDir" value="target"/>
 	<property name="version" value="0.1.0"/>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
 	<target name="resolve">
 		<ivy:retrieve/>
@@ -16,6 +17,7 @@
 			<fileset dir="${destDir}" includes="**/*"/>
 			<fileset dir="." includes="*.jar"/>
 		</delete>
+		<delete file="${projectName}.bat"/>
 	</target>
 
 	<target name="compile" description="Compiling source files">
@@ -36,5 +38,13 @@
 		</jar>
 	</target>
 	
-	<target name="assemble" depends="jar"></target>
+	<target name="assemble">
+<echo file="${projectName}.bat">@ECHO OFF
+IF "%JAVA_HOME%" == "" (
+	ECHO "Variable %%JAVA_HOME%% is not defined on this computer or Java is not installed"
+) ELSE (
+	%JAVA_HOME%\bin\java -jar b64-${version}.jar %*
+)
+</echo>
+	</target>
 </project>
