@@ -39,12 +39,15 @@
 	</target>
 	
 	<target name="assemble">
-<echo file="${projectName}.bat">@ECHO OFF
-IF "%JAVA_HOME%" == "" (
-	ECHO "Variable %%JAVA_HOME%% is not defined on this computer or Java is not installed"
-) ELSE (
-	%JAVA_HOME%\bin\java -jar b64-${version}.jar %*
-)
-</echo>
+		<echo file="${projectName}.bat">
+			@ECHO OFF
+			IF "%JAVA_HOME%" == "" (
+				ECHO Variable ^%JAVA_HOME^% is not defined on this computer or Java is not installed
+			) ELSE IF EXIST "%JAVA_HOME%\bin\java.exe" (
+				%JAVA_HOME%\bin\java -jar b64-${version}.jar %*
+			) ELSE (
+				ECHO Java is not installed on this computer
+			)
+		</echo>
 	</target>
 </project>
