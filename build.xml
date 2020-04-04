@@ -1,53 +1,80 @@
 <?xml version="1.0"?>
-<project name="${projectName}" default="jar" xmlns:ivy="antlib:org.apache.ivy.ant">
-	<property name="projectName" value="b64"/>
-	<property name="srcDir" value="src/main/java"/>
-	<property name="testDir" value="src/main/test"/>
-	<property name="destDir" value="target"/>
-	<property name="version" value="0.1.0"/>
+<project name="${project.name}" default="jar" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
+
+	<property name="project.name" value="b64"/>
+	<property name="project.vendor" value="STEIN197"/>
+	<property name="project.version" value="0.1.0"/>
+	<property name="project.mainClass" value="site.stein197.b64.Application"/>
+	<property name="dir.src" value="src/main/java"/>
+	<property name="dir.test" value="src/main/test"/>
+	<property name="dir.lib" value="lib"/>
+	<property name="dir.dest" value="target"/>
+
+	<path id="classpath">
+		<pathelement path="${project.name}-${project.version}.jar"/>
+		<fileset dir="${dir.lib}">
+			<include name="*.jar"/>
+			<include name="*sources.jar"/>
+			<include name="*javadoc.jar"/>
+		</fileset>
+	</path>
+
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
-	<target name="resolve">
+	<target name="resolve" description="Resolves dependencies and downloads them">
 		<ivy:retrieve/>
 	</target>
 
-	<target name="clean" description="Clean up destination directory">
-		<mkdir dir="${destDir}"/>
+	<target name="clean" description="Cleans up destination directory and all output directories">
+		<mkdir dir="${dir.dest}"/>
 		<delete includeEmptyDirs="true">
-			<fileset dir="${destDir}" includes="**/*"/>
+			<fileset dir="${dir.dest}" includes="**/*"/>
 			<fileset dir="." includes="*.jar"/>
 		</delete>
-		<delete file="${projectName}.bat"/>
+		<delete file="${project.name}.bat"/>
 	</target>
 
-	<target name="compile" description="Compiling source files">
+	<target name="compile" description="Compiles source files">
 		<javac
-			srcdir="${srcDir}"
-			destdir="${destDir}"
+			srcdir="${dir.src}"
+			destdir="${dir.dest}"
 			/>
 	</target>
 
-	<target name="jar" depends="compile">
-		<jar destfile="${projectName}-${version}.jar">
+	<target name="jar" depends="compile" description="Puts the output to a jar archive">
+		<jar destfile="${project.name}-${project.version}.jar">
 			<manifest>
-				<attribute name="Main-Class" value="site.stein197.b64.Application"/>
-				<attribute name="Version" value="${version}"/>
-				<attribute name="Class-Path" value="."/>
+				<attribute name="Main-Class" value="${project.mainClass}"/>
+				<attribute name="Specification-Title" value="${project.name}"/>
+				<attribute name="Specification-Version" value="${project.version}"/>
+				<attribute name="Specification-Vendor" value="${project.vendor}"/>
+				<attribute name="Implementation-Title" value="${project.name}"/>
+				<attribute name="Implementation-Version" value="${project.version}"/>
+				<attribute name="Implementation-Vendor" value="${project.vendor}"/>
+				<!-- <attribute name="Class-Path" value="lib/picocli-4.2.0.jar"/> -->
 			</manifest>
-			<fileset dir="${destDir}" includes="**/*"/>
+			<fileset dir="${dir.dest}" includes="**/*"/>
 		</jar>
 	</target>
 	
-	<target name="assemble">
-		<echo file="${projectName}.bat">
+	<target name="assemble" depends="jar" description="Makes final actions. At this stage the application is ready to use">
+		<echo file="${project.name}.bat">
 			@ECHO OFF
 			IF "%JAVA_HOME%" == "" (
 				ECHO Variable ^%JAVA_HOME^% is not defined on this computer or Java is not installed
 			) ELSE IF EXIST "%JAVA_HOME%\bin\java.exe" (
-				%JAVA_HOME%\bin\java -jar b64-${version}.jar %*
+				%JAVA_HOME%\bin\java -jar b64-${project.version}.jar %*
 			) ELSE (
 				ECHO Java is not installed on this computer
 			)
 		</echo>
+	</target>
+
+	<target name="run" description="Runs the application without assembling">
+		<input message="Type command line arguments for the program" addProperty="args"/>
+		<java fork="true" classname="${project.mainClass}">
+			<classpath refid="classpath"/>
+			<arg line="${args}"/>
+		</java>
 	</target>
 </project>
