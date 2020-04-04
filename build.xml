@@ -14,8 +14,8 @@
 		<pathelement path="${project.name}-${project.version}.jar"/>
 		<fileset dir="${dir.lib}">
 			<include name="*.jar"/>
-			<include name="*sources.jar"/>
-			<include name="*javadoc.jar"/>
+			<exclude name="*sources.jar"/>
+			<exclude name="*javadoc.jar"/>
 		</fileset>
 	</path>
 
@@ -51,12 +51,13 @@
 				<attribute name="Implementation-Title" value="${project.name}"/>
 				<attribute name="Implementation-Version" value="${project.version}"/>
 				<attribute name="Implementation-Vendor" value="${project.vendor}"/>
-				<!-- <attribute name="Class-Path" value="lib/picocli-4.2.0.jar"/> -->
+				<attribute name="Class-Path" value="."/>
 			</manifest>
 			<fileset dir="${dir.dest}" includes="**/*"/>
 		</jar>
 	</target>
 	
+	<!-- Rewrite it -->
 	<target name="assemble" depends="jar" description="Makes final actions. At this stage the application is ready to use">
 		<echo file="${project.name}.bat">
 			@ECHO OFF
@@ -68,6 +69,25 @@
 				ECHO Java is not installed on this computer
 			)
 		</echo>
+
+		<mkdir dir="out" />
+
+		<jar jarfile="out/lib/dependencies-all.jar">
+			<zipgroupfileset dir="lib">
+				<include name="*.jar" />
+				<exclude name="*sources.jar"/>
+				<exclude name="*javadoc.jar"/>
+			</zipgroupfileset>
+		</jar>
+
+		<jar jarfile="out/jar.jar" basedir="target">
+			<manifest>
+				<attribute name="Main-Class" value="${project.mainClass}" />
+			</manifest>
+			<zipfileset src="out/lib/dependencies-all.jar" 
+                                excludes="META-INF/*.SF" />
+		</jar>
+	
 	</target>
 
 	<target name="run" description="Runs the application without assembling">
