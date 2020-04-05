@@ -5,13 +5,15 @@
 	<property name="project.vendor" value="STEIN197"/>
 	<property name="project.version" value="0.1.0"/>
 	<property name="project.mainClass" value="site.stein197.b64.Application"/>
+	<property name="project.manifestName" value="MANIFEST.MF"/>
 	<property name="dir.src" value="src/main/java"/>
 	<property name="dir.test" value="src/main/test"/>
 	<property name="dir.lib" value="lib"/>
 	<property name="dir.dest" value="target"/>
+	<property name="dir.out" value="out"/>
 
 	<path id="classpath">
-		<pathelement path="${project.name}-${project.version}.jar"/>
+		<pathelement path="${dir.out}/${project.name}-${project.version}.jar"/>
 		<fileset dir="${dir.lib}">
 			<include name="*.jar"/>
 			<exclude name="*sources.jar"/>
@@ -29,7 +31,7 @@
 		<mkdir dir="${dir.dest}"/>
 		<delete includeEmptyDirs="true">
 			<fileset dir="${dir.dest}" includes="**/*"/>
-			<fileset dir="." includes="*.jar"/>
+			<fileset dir="${dir.out}" includes="**/*"/>
 		</delete>
 		<delete file="${project.name}.bat"/>
 	</target>
@@ -41,25 +43,28 @@
 			/>
 	</target>
 
-	<target name="jar" depends="compile" description="Put the output to a jar archive">
-		<jar destfile="${project.name}-${project.version}.jar">
-			<manifest>
-				<attribute name="Main-Class" value="${project.mainClass}"/>
-				<attribute name="Specification-Title" value="${project.name}"/>
-				<attribute name="Specification-Version" value="${project.version}"/>
-				<attribute name="Specification-Vendor" value="${project.vendor}"/>
-				<attribute name="Implementation-Title" value="${project.name}"/>
-				<attribute name="Implementation-Version" value="${project.version}"/>
-				<attribute name="Implementation-Vendor" value="${project.vendor}"/>
-				<attribute name="Class-Path" value="."/>
-			</manifest>
+	<target name="manifest" description="Create manifest file">
+		<manifest file="${dir.out}/${project.manifestName}">
+			<attribute name="Main-Class" value="${project.mainClass}"/>
+			<attribute name="Specification-Title" value="${project.name}"/>
+			<attribute name="Specification-Version" value="${project.version}"/>
+			<attribute name="Specification-Vendor" value="${project.vendor}"/>
+			<attribute name="Implementation-Title" value="${project.name}"/>
+			<attribute name="Implementation-Version" value="${project.version}"/>
+			<attribute name="Implementation-Vendor" value="${project.vendor}"/>
+			<attribute name="Class-Path" value="."/>
+		</manifest>
+	</target>
+
+	<target name="jar" depends="compile, manifest" description="Put the output to a jar archive">
+		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" manifest="${dir.out}/${project.manifestName}">
 			<fileset dir="${dir.dest}" includes="**/*"/>
 		</jar>
 	</target>
 	
 	<!-- Rewrite it -->
 	<target name="assemble" depends="jar" description="Make final actions. At this stage the application is ready to use">
-		<echo file="${project.name}.bat">
+		<echo file="${dir.out}/${project.name}.bat">
 			@ECHO OFF
 			IF "%JAVA_HOME%" == "" (
 				ECHO Variable ^%JAVA_HOME^% is not defined on this computer or Java is not installed
@@ -69,25 +74,13 @@
 				ECHO Java is not installed on this computer
 			)
 		</echo>
-
-		<mkdir dir="out" />
-
-		<jar jarfile="out/lib/dependencies-all.jar">
+		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" basedir="target" manifest="${dir.out}/${project.manifestName}">
 			<zipgroupfileset dir="lib">
-				<include name="*.jar" />
+				<include name="*.jar"/>
 				<exclude name="*sources.jar"/>
 				<exclude name="*javadoc.jar"/>
 			</zipgroupfileset>
 		</jar>
-
-		<jar jarfile="out/jar.jar" basedir="target">
-			<manifest>
-				<attribute name="Main-Class" value="${project.mainClass}" />
-			</manifest>
-			<zipfileset src="out/lib/dependencies-all.jar" 
-                                excludes="META-INF/*.SF" />
-		</jar>
-	
 	</target>
 
 	<target name="run" description="Run the application without assembling">
