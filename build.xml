@@ -37,10 +37,9 @@
 	</target>
 
 	<target name="compile" description="Compile source code">
-		<javac
-			srcdir="${dir.src}"
-			destdir="${dir.dest}"
-			/>
+		<javac srcdir="${dir.src}" destdir="${dir.dest}">
+			<classpath refid="classpath"/>
+		</javac>
 	</target>
 
 	<target name="manifest" description="Create manifest file">
@@ -61,26 +60,26 @@
 			<fileset dir="${dir.dest}" includes="**/*"/>
 		</jar>
 	</target>
-	
-	<!-- Rewrite it -->
+
 	<target name="assemble" depends="jar" description="Make final actions. At this stage the application is ready to use">
 		<echo file="${dir.out}/${project.name}.bat">
 			@ECHO OFF
 			IF "%JAVA_HOME%" == "" (
 				ECHO Variable ^%JAVA_HOME^% is not defined on this computer or Java is not installed
 			) ELSE IF EXIST "%JAVA_HOME%\bin\java.exe" (
-				%JAVA_HOME%\bin\java -jar b64-${project.version}.jar %*
+				%JAVA_HOME%\bin\java.exe -jar %~dp0\b64-${project.version}.jar %*
 			) ELSE (
 				ECHO Java is not installed on this computer
 			)
 		</echo>
 		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" basedir="target" manifest="${dir.out}/${project.manifestName}">
-			<zipgroupfileset dir="lib">
+			<zipgroupfileset dir="lib" excludes="META-INF/*">
 				<include name="*.jar"/>
 				<exclude name="*sources.jar"/>
 				<exclude name="*javadoc.jar"/>
 			</zipgroupfileset>
 		</jar>
+		<delete file="${dir.out}/${project.manifestName}"/>
 	</target>
 
 	<target name="run" description="Run the application without assembling">
