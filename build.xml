@@ -21,11 +21,11 @@
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
-	<target name="resolve" description="Resolves dependencies and downloads them">
+	<target name="resolve" description="Resolve and download dependencies">
 		<ivy:retrieve/>
 	</target>
 
-	<target name="clean" description="Cleans up destination directory and all output directories">
+	<target name="clean" description="Clean up output and destination directory">
 		<mkdir dir="${dir.dest}"/>
 		<delete includeEmptyDirs="true">
 			<fileset dir="${dir.dest}" includes="**/*"/>
@@ -34,14 +34,14 @@
 		<delete file="${project.name}.bat"/>
 	</target>
 
-	<target name="compile" description="Compiles source files">
+	<target name="compile" description="Compile source code">
 		<javac
 			srcdir="${dir.src}"
 			destdir="${dir.dest}"
 			/>
 	</target>
 
-	<target name="jar" depends="compile" description="Puts the output to a jar archive">
+	<target name="jar" depends="compile" description="Put the output to a jar archive">
 		<jar destfile="${project.name}-${project.version}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="${project.mainClass}"/>
@@ -58,7 +58,7 @@
 	</target>
 	
 	<!-- Rewrite it -->
-	<target name="assemble" depends="jar" description="Makes final actions. At this stage the application is ready to use">
+	<target name="assemble" depends="jar" description="Make final actions. At this stage the application is ready to use">
 		<echo file="${project.name}.bat">
 			@ECHO OFF
 			IF "%JAVA_HOME%" == "" (
@@ -90,7 +90,7 @@
 	
 	</target>
 
-	<target name="run" description="Runs the application without assembling">
+	<target name="run" description="Run the application without assembling">
 		<input message="Type command line arguments for the program" addProperty="args"/>
 		<java fork="true" classname="${project.mainClass}">
 			<classpath refid="classpath"/>
