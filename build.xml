@@ -1,50 +1,93 @@
 <?xml version="1.0"?>
-<project name="${projectName}" default="jar" xmlns:ivy="antlib:org.apache.ivy.ant">
-	<property name="projectName" value="b64"/>
-	<property name="srcDir" value="src/main/java"/>
-	<property name="testDir" value="src/main/test"/>
-	<property name="destDir" value="target"/>
-	<property name="version" value="0.1.0"/>
+<project name="${project.name}" default="jar" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
+
+	<property name="project.name" value="b64"/>
+	<property name="project.vendor" value="STEIN197"/>
+	<property name="project.version" value="0.1.0"/>
+	<property name="project.mainClass" value="site.stein197.b64.Application"/>
+	<property name="project.manifestName" value="MANIFEST.MF"/>
+	<property name="dir.src" value="src/main/java"/>
+	<property name="dir.test" value="src/main/test"/>
+	<property name="dir.lib" value="lib"/>
+	<property name="dir.dest" value="target"/>
+	<property name="dir.out" value="out"/>
+
+	<path id="classpath">
+		<pathelement path="${dir.out}/${project.name}-${project.version}.jar"/>
+		<fileset dir="${dir.lib}">
+			<include name="*.jar"/>
+			<exclude name="*sources.jar"/>
+			<exclude name="*javadoc.jar"/>
+		</fileset>
+	</path>
+
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
-	<target name="resolve">
+	<target name="resolve" description="Resolve and download dependencies">
 		<ivy:retrieve/>
 	</target>
 
-	<target name="clean" description="Clean up destination directory">
-		<mkdir dir="${destDir}"/>
+	<target name="clean" description="Clean up output and destination directory">
+		<mkdir dir="${dir.dest}"/>
 		<delete includeEmptyDirs="true">
-			<fileset dir="${destDir}" includes="**/*"/>
-			<fileset dir="." includes="*.jar"/>
+			<fileset dir="${dir.dest}" includes="**/*"/>
+			<fileset dir="${dir.out}" includes="**/*"/>
 		</delete>
-		<delete file="${projectName}.bat"/>
+		<delete file="${project.name}.bat"/>
 	</target>
 
-	<target name="compile" description="Compiling source files">
+	<target name="compile" description="Compile source code">
 		<javac
-			srcdir="${srcDir}"
-			destdir="${destDir}"
+			srcdir="${dir.src}"
+			destdir="${dir.dest}"
 			/>
 	</target>
 
-	<target name="jar" depends="compile">
-		<jar destfile="${projectName}-${version}.jar">
-			<manifest>
-				<attribute name="Main-Class" value="site.stein197.b64.Application"/>
-				<attribute name="Version" value="${version}"/>
-				<attribute name="Class-Path" value="."/>
-			</manifest>
-			<fileset dir="${destDir}" includes="**/*"/>
+	<target name="manifest" description="Create manifest file">
+		<manifest file="${dir.out}/${project.manifestName}">
+			<attribute name="Main-Class" value="${project.mainClass}"/>
+			<attribute name="Specification-Title" value="${project.name}"/>
+			<attribute name="Specification-Version" value="${project.version}"/>
+			<attribute name="Specification-Vendor" value="${project.vendor}"/>
+			<attribute name="Implementation-Title" value="${project.name}"/>
+			<attribute name="Implementation-Version" value="${project.version}"/>
+			<attribute name="Implementation-Vendor" value="${project.vendor}"/>
+			<attribute name="Class-Path" value="."/>
+		</manifest>
+	</target>
+
+	<target name="jar" depends="compile, manifest" description="Put the output to a jar archive">
+		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" manifest="${dir.out}/${project.manifestName}">
+			<fileset dir="${dir.dest}" includes="**/*"/>
 		</jar>
 	</target>
 	
-	<target name="assemble">
-<echo file="${projectName}.bat">@ECHO OFF
-IF "%JAVA_HOME%" == "" (
-	ECHO "Variable %%JAVA_HOME%% is not defined on this computer or Java is not installed"
-) ELSE (
-	%JAVA_HOME%\bin\java -jar b64-${version}.jar %*
-)
-</echo>
+	<!-- Rewrite it -->
+	<target name="assemble" depends="jar" description="Make final actions. At this stage the application is ready to use">
+		<echo file="${dir.out}/${project.name}.bat">
+			@ECHO OFF
+			IF "%JAVA_HOME%" == "" (
+				ECHO Variable ^%JAVA_HOME^% is not defined on this computer or Java is not installed
+			) ELSE IF EXIST "%JAVA_HOME%\bin\java.exe" (
+				%JAVA_HOME%\bin\java -jar b64-${project.version}.jar %*
+			) ELSE (
+				ECHO Java is not installed on this computer
+			)
+		</echo>
+		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" basedir="target" manifest="${dir.out}/${project.manifestName}">
+			<zipgroupfileset dir="lib">
+				<include name="*.jar"/>
+				<exclude name="*sources.jar"/>
+				<exclude name="*javadoc.jar"/>
+			</zipgroupfileset>
+		</jar>
+	</target>
+
+	<target name="run" description="Run the application without assembling">
+		<input message="Type command line arguments for the program" addProperty="args"/>
+		<java fork="true" classname="${project.mainClass}">
+			<classpath refid="classpath"/>
+			<arg line="${args}"/>
+		</java>
 	</target>
 </project>

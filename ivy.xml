@@ -1,5 +1,6 @@
 <ivy-module version="2.0">
 	<info organisation="stein197.site" module="b64"/>
+	
 	<dependencies>
 		<dependency org="info.picocli" name="picocli" rev="4.2.0"/>
 	</dependencies>

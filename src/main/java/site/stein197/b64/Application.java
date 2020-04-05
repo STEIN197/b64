@@ -1,41 +1,23 @@
 package site.stein197.b64;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Base64;
+import java.util.concurrent.Callable;
 
-public class Application {
+import picocli.CommandLine;
+import picocli.CommandLine.Parameters;
 
-	private byte[] data;
-	private String encodedData;
+public class Application implements Callable<Integer> {
+
+	@Parameters(index = "0", description = "A file which need to be converted to Base64")
+	private String file;
 
 	public static void main(String... args) {
-		try {
-			var app = new Application(args);
-			System.out.println(app.encodeFile());
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		}
+		System.out.println("HH");
+		int exitCode = new CommandLine(new Application()).execute(args);
+		System.exit(exitCode);
 	}
 
-	public Application(String... args) throws IllegalArgumentException, FileNotFoundException, IOException {
-		this.parseArguments(args);
-	}
-
-	public String encodeFile() {
-		if (this.encodedData != null)
-			return this.encodedData;
-		return this.encodedData = Base64.getEncoder().encodeToString(this.data);
-	}
-
-	private void parseArguments(String... args) throws IllegalArgumentException, FileNotFoundException, IOException {
-		File file = new File(args[1]);
-		this.data = new byte[(int) file.length()];
-		InputStream is = new FileInputStream(file);
-		is.read(this.data);
-		is.close();
+	@Override
+	public Integer call() {
+		return null;
 	}
 }
