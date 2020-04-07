@@ -13,7 +13,9 @@ public class Encoder {
 	private String encodedData;
 	private boolean onlyB64;
 
-	public Encoder(String filepath, boolean onlyB64) {
+	public Encoder(String filepath, boolean onlyB64) throws IllegalArgumentException {
+		if (filepath == null || filepath.length() == 0)
+			throw new IllegalArgumentException("No file given");
 		this.filepath = filepath;
 		this.onlyB64 = onlyB64;
 	}

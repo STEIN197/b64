@@ -73,7 +73,7 @@
 			)
 		</echo>
 		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" basedir="target" manifest="${dir.out}/${project.manifestName}">
-			<zipgroupfileset dir="lib" excludes="META-INF/*">
+			<zipgroupfileset dir="${dir.lib}" excludes="META-INF/*">
 				<include name="*.jar"/>
 				<exclude name="*sources.jar"/>
 				<exclude name="*javadoc.jar"/>
@@ -83,7 +83,7 @@
 	</target>
 
 	<target name="run" description="Run the application without assembling">
-		<input message="Type command line arguments for the program" addProperty="args"/>
+		<input message="Type command line arguments" addProperty="args"/>
 		<java fork="true" classname="${project.mainClass}">
 			<classpath refid="classpath"/>
 			<arg line="${args}"/>
