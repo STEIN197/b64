@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="${project.name}" default="jar" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
+<project name="${project.name}" default="assemble" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
 
 	<property name="project.name" value="b64"/>
 	<property name="project.vendor" value="STEIN197"/>
@@ -7,7 +7,7 @@
 	<property name="project.mainClass" value="site.stein197.b64.Application"/>
 	<property name="project.manifestName" value="MANIFEST.MF"/>
 	<property name="dir.src" value="src/main/java"/>
-	<property name="dir.test" value="src/main/test"/>
+	<property name="dir.test" value="src/test/java"/>
 	<property name="dir.lib" value="lib"/>
 	<property name="dir.dest" value="target"/>
 	<property name="dir.out" value="out"/>
