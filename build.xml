@@ -1,18 +1,7 @@
 <?xml version="1.0"?>
 <project name="${project.name}" default="assemble" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
 
-	<property name="project.name" value="b64"/>
-	<property name="project.vendor" value="STEIN197"/>
-	<property name="project.version" value="0.1.0"/>
-	<property name="project.mainClass" value="site.stein197.b64.Application"/>
-	<property name="project.manifestName" value="MANIFEST.MF"/>
-	<property name="dir.src" value="src/main/java"/>
-	<property name="dir.test" value="src/test/java"/>
-	<property name="dir.lib" value="lib"/>
-	<property name="dir.lib.test" value="lib/test"/>
-	<property name="dir.lib.default" value="lib/default"/>
-	<property name="dir.dest" value="target"/>
-	<property name="dir.out" value="out"/>
+	<property file="build.properties"/>
 
 	<path id="classpath">
 		<pathelement path="${dir.out}/${project.name}-${project.version}.jar"/>
