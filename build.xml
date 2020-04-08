@@ -9,22 +9,20 @@
 	<property name="dir.src" value="src/main/java"/>
 	<property name="dir.test" value="src/test/java"/>
 	<property name="dir.lib" value="lib"/>
+	<property name="dir.lib.test" value="lib/test"/>
+	<property name="dir.lib.default" value="lib/default"/>
 	<property name="dir.dest" value="target"/>
 	<property name="dir.out" value="out"/>
 
 	<path id="classpath">
 		<pathelement path="${dir.out}/${project.name}-${project.version}.jar"/>
 		<fileset dir="${dir.lib}">
-			<include name="*.jar"/>
-			<exclude name="*sources.jar"/>
-			<exclude name="*javadoc.jar"/>
+			<include name="**/*.jar"/>
 		</fileset>
 	</path>
 
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
-
 	<target name="resolve" description="Resolve and download dependencies">
-		<ivy:retrieve/>
+		<ivy:retrieve pattern="${dir.lib}/[conf]/[artifact]-[revision].[ext]"/>
 	</target>
 
 	<target name="clean" description="Clean up output and destination directory">
@@ -33,7 +31,6 @@
 			<fileset dir="${dir.dest}" includes="**/*"/>
 			<fileset dir="${dir.out}" includes="**/*"/>
 		</delete>
-		<delete file="${project.name}.bat"/>
 	</target>
 
 	<target name="compile" description="Compile source code">
@@ -73,10 +70,8 @@
 			)
 		</echo>
 		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" basedir="target" manifest="${dir.out}/${project.manifestName}">
-			<zipgroupfileset dir="${dir.lib}" excludes="META-INF/*">
+			<zipgroupfileset dir="${dir.lib.default}" excludes="META-INF/*">
 				<include name="*.jar"/>
-				<exclude name="*sources.jar"/>
-				<exclude name="*javadoc.jar"/>
 			</zipgroupfileset>
 		</jar>
 		<delete file="${dir.out}/${project.manifestName}"/>
@@ -88,5 +83,14 @@
 			<classpath refid="classpath"/>
 			<arg line="${args}"/>
 		</java>
+	</target>
+
+	<target name="test">
+		<junit printsummary="on" haltonfailure="no">
+			<classpath refid="classpath"/>
+			<test name="site.stein197.b64.EncoderTest">
+				<formatter type="plain" usefile="false"/>
+			</test>
+		</junit>
 	</target>
 </project>
