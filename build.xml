@@ -81,7 +81,7 @@
 		</echo>
 		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" manifest="${dir.out}/${project.manifestName}">
 			<fileset dir="${dir.dest}" includes="**/*" excludes="**/*Test.class"/>
-			<zipgroupfileset dir="${dir.lib.default}" excludes="META-INF/*">
+			<zipgroupfileset dir="${dir.lib.default}" excludes="META-INF/**/*.*">
 				<include name="*.jar"/>
 			</zipgroupfileset>
 		</jar>

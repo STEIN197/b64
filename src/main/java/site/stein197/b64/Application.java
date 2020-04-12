@@ -1,6 +1,5 @@
 package site.stein197.b64;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,7 +24,7 @@ public class Application implements Callable<Integer> {
 	@Option(names = {"-v", "-version"}, description = "Show application version")
 	private boolean showVersion;
 
-	@Parameters(index = "0", description = "A file which need to be converted to Base64")
+	@Parameters(index = "0", description = "A file which need to be converted to Base64", arity = "0..1")
 	private String filepath;
 
 	public static void main(String... args) {
