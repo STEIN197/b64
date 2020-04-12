@@ -2,6 +2,7 @@ package site.stein197.b64;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.concurrent.Callable;
 
 import picocli.CommandLine;
@@ -26,20 +27,21 @@ public class Application implements Callable<Integer> {
 
 	@Override
 	public Integer call() {
-		if (this.filepath == null || this.filepath.trim().length() == 0) {
-			System.out.println("No file is present");
-			return 3;
-		}
+		var result = this.execute();
+		return result.getKey();
+	}
+
+	public SimpleEntry<Integer, String> execute() {
+		boolean filenameIsSupplied = this.filepath != null && this.filepath.trim().length() > 0;
+		if (!filenameIsSupplied)
+			return new SimpleEntry<Integer, String>(3, "No file is present");
 		var encoder = new Encoder(this.filepath, this.onlyB64);
 		try {
-			System.out.println(encoder.encode());
-			return 0;
+			return new SimpleEntry<Integer, String>(0, encoder.encode());
 		} catch (FileNotFoundException ex) {
-			System.out.println(String.format("File %s does not exist", this.filepath));
-			return 1;
+			return new SimpleEntry<Integer, String>(1, String.format("File %s does not exist", this.filepath));
 		} catch (IOException ex) {
-			System.out.println(String.format("Can't read file %s", this.filepath));
-			return 2;
+			return new SimpleEntry<Integer, String>(2, String.format("Can't read file %s", this.filepath));
 		}
 	}
 }
