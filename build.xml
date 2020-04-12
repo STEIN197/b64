@@ -4,9 +4,9 @@
 	<property file="build.properties"/>
 
 	<path id="classpath">
-		<pathelement path="${dir.out}/${project.name}-${project.version}.jar"/>
-		<fileset dir="${dir.lib}">
-			<include name="**/*.jar"/>
+		<fileset dir=".">
+			<include name="${dir.out}/*.jar"/>
+			<include name="${dir.lib}/**/*.jar"/>
 		</fileset>
 	</path>
 
@@ -23,7 +23,9 @@
 	</target>
 
 	<target name="compile" description="Compile source code">
-		<javac srcdir="${dir.src}" destdir="${dir.dest}">
+		<javac destdir="${dir.dest}">
+			<src path="${dir.src}"/>
+			<src path="${dir.test}"/>
 			<classpath refid="classpath"/>
 		</javac>
 	</target>
@@ -43,8 +45,28 @@
 
 	<target name="jar" depends="compile, manifest" description="Put the output to a jar archive">
 		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" manifest="${dir.out}/${project.manifestName}">
-			<fileset dir="${dir.dest}" includes="**/*"/>
+			<fileset dir="${dir.dest}" includes="**/*" excludes="**/*Test.class"/>
 		</jar>
+		<jar destfile="${dir.out}/${project.name}-test-${project.version}.jar">
+			<fileset dir="${dir.dest}" includes="**/*Test.class"/>
+		</jar>
+	</target>
+
+	<target name="run" description="Run the application without assembling">
+		<input message="Type command line arguments" addProperty="args"/>
+		<java fork="true" classname="${project.mainClass}">
+			<classpath refid="classpath"/>
+			<arg line="${args}"/>
+		</java>
+	</target>
+
+	<target name="test">
+		<junit printsummary="on" haltonfailure="no">
+			<classpath refid="classpath"/>
+			<test name="site.stein197.b64.EncoderTest">
+				<formatter type="plain" usefile="false"/>
+			</test>
+		</junit>
 	</target>
 
 	<target name="assemble" depends="jar" description="Make final actions. At this stage the application is ready to use">
@@ -64,22 +86,5 @@
 			</zipgroupfileset>
 		</jar>
 		<delete file="${dir.out}/${project.manifestName}"/>
-	</target>
-
-	<target name="run" description="Run the application without assembling">
-		<input message="Type command line arguments" addProperty="args"/>
-		<java fork="true" classname="${project.mainClass}">
-			<classpath refid="classpath"/>
-			<arg line="${args}"/>
-		</java>
-	</target>
-
-	<target name="test">
-		<junit printsummary="on" haltonfailure="no">
-			<classpath refid="classpath"/>
-			<test name="site.stein197.b64.EncoderTest">
-				<formatter type="plain" usefile="false"/>
-			</test>
-		</junit>
 	</target>
 </project>

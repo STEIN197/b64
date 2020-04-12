@@ -26,7 +26,7 @@ public class Application implements Callable<Integer> {
 
 	@Override
 	public Integer call() {
-		if (this.filepath == null || this.filepath.length() == 0) {
+		if (this.filepath == null || this.filepath.trim().length() == 0) {
 			System.out.println("No file is present");
 			return 3;
 		}
