@@ -4,6 +4,8 @@ This simple batch program encodes files (like images) into base64 format so the 
 
 `ant resolve assemble`
 
+Or download it directly from [here](b64/releases/tag/v0.2.0)
+
 And copy all the output from `out` directory to anywhere you want and use it like:
 
 `b64 build.xml | clip`
