@@ -14,8 +14,7 @@
 		<ivy:retrieve pattern="${dir.lib}/[conf]/[artifact]-[revision].[ext]"/>
 	</target>
 
-	<target name="clean" description="Clean up output and destination directory">
-		<mkdir dir="${dir.dest}"/>
+	<target name="clean" description="Clean up workspace">
 		<delete includeEmptyDirs="true">
 			<fileset dir="${dir.dest}" includes="**/*"/>
 			<fileset dir="${dir.out}" includes="**/*"/>
@@ -47,9 +46,6 @@
 		<jar destfile="${dir.out}/${project.name}-${project.version}.jar" manifest="${dir.out}/${project.manifestName}">
 			<fileset dir="${dir.dest}" includes="**/*" excludes="**/*Test.class"/>
 		</jar>
-		<jar destfile="${dir.out}/${project.name}-test-${project.version}.jar">
-			<fileset dir="${dir.dest}" includes="**/*Test.class"/>
-		</jar>
 	</target>
 
 	<target name="run" description="Run the application without assembling">
@@ -63,9 +59,12 @@
 	<target name="test">
 		<junit printsummary="on" haltonfailure="no">
 			<classpath refid="classpath"/>
-			<test name="site.stein197.b64.EncoderTest">
-				<formatter type="plain" usefile="false"/>
-			</test>
+			<batchtest>
+				<fileset dir="${dir.dest}">
+					<include name="**/*Test*"/>
+				</fileset>
+			</batchtest>
+			<formatter type="plain" usefile="false"/>
 		</junit>
 	</target>
 
